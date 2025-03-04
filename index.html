@@ -43,11 +43,11 @@
             let targetPrice = currentMarketPrice + (stopLossPips * (rewardPercentage / riskPercentage) * 0.0001);
 
             // Update UI
-            document.getElementById("positionSize").innerHTML = positionSize.toFixed(2) + " Units";
-            document.getElementById("lotSize").innerHTML = `(${standardLots} Std Lots | ${miniLots} Mini Lots | ${microLots} Micro Lots)`;
-            document.getElementById("riskUSD").innerHTML = "$" + riskInUSD.toFixed(2);
-            document.getElementById("rewardUSD").innerHTML = "$" + rewardInUSD.toFixed(2);
-            document.getElementById("targetPrice").innerHTML = "$" + targetPrice.toFixed(5);
+            document.getElementById("positionSize").innerHTML = positionSize.toFixed(2);
+            document.getElementById("lotSize").innerHTML = `${standardLots} Std Lots | ${miniLots} Mini Lots | ${microLots} Micro Lots`;
+            document.getElementById("riskUSD").innerHTML = riskInUSD.toFixed(2);
+            document.getElementById("rewardUSD").innerHTML = rewardInUSD.toFixed(2);
+            document.getElementById("targetPrice").innerHTML = targetPrice.toFixed(5);
         }
 
         function copyToClipboard(id) {
@@ -61,6 +61,10 @@
         .copy-btn {
             cursor: pointer;
             margin-left: 5px;
+            color: blue;
+        }
+        .copy-btn:hover {
+            text-decoration: underline;
         }
         .result-box {
             background: #f8f9fa;
@@ -96,11 +100,11 @@
             <div class="result-box">
                 <h5>Results</h5>
 
-                <p>Position Size: <span id="positionSize">-</span> <span class="copy-btn" onclick="copyToClipboard('positionSize')">📋</span></p>
+                <p>Position Size: <span id="positionSize">-</span> <span class="copy-btn" onclick="copyToClipboard('positionSize')">📋 Copy</span></p>
                 <p>Lot Size: <span id="lotSize">-</span></p>
-                <p>Risk in USD: <span id="riskUSD">-</span> <span class="copy-btn" onclick="copyToClipboard('riskUSD')">📋</span></p>
-                <p>Reward in USD: <span id="rewardUSD">-</span> <span class="copy-btn" onclick="copyToClipboard('rewardUSD')">📋</span></p>
-                <p>Target Price: <span id="targetPrice">-</span> <span class="copy-btn" onclick="copyToClipboard('targetPrice')">📋</span></p>
+                <p>Risk in USD: <span id="riskUSD">-</span> <span class="copy-btn" onclick="copyToClipboard('riskUSD')">📋 Copy</span></p>
+                <p>Reward in USD: <span id="rewardUSD">-</span> <span class="copy-btn" onclick="copyToClipboard('rewardUSD')">📋 Copy</span></p>
+                <p>Target Price: <span id="targetPrice">-</span> <span class="copy-btn" onclick="copyToClipboard('targetPrice')">📋 Copy</span></p>
             </div>
         </div>
     </div>
