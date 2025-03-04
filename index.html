@@ -22,6 +22,9 @@
             // Calculate Risk in USD
             let riskInUSD = (capital * riskPercentage) / 100;
 
+            // Calculate Reward in USD
+            let rewardInUSD = (riskInUSD * (rewardPercentage / riskPercentage));
+
             // Calculate Stop-Loss in Pips
             let stopLossPips = Math.abs((currentMarketPrice - stopLossPrice) / 0.0001);
 
@@ -43,6 +46,7 @@
             document.getElementById("positionSize").innerHTML = positionSize.toFixed(2) + " Units";
             document.getElementById("lotSize").innerHTML = `(${standardLots} Std Lots | ${miniLots} Mini Lots | ${microLots} Micro Lots)`;
             document.getElementById("riskUSD").innerHTML = "$" + riskInUSD.toFixed(2);
+            document.getElementById("rewardUSD").innerHTML = "$" + rewardInUSD.toFixed(2);
             document.getElementById("targetPrice").innerHTML = "$" + targetPrice.toFixed(5);
         }
 
