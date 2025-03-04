@@ -13,11 +13,21 @@
             let currentMarketPrice = parseFloat(document.getElementById("marketPrice").value);
             let riskPercentage = parseFloat(document.getElementById("riskPercentage").value);
             let rewardPercentage = parseFloat(document.getElementById("rewardPercentage").value);
+            let orderTypeBox = document.getElementById("orderTypeBox");
 
             if (isNaN(capital) || isNaN(stopLossPrice) || isNaN(currentMarketPrice) || isNaN(riskPercentage) || isNaN(rewardPercentage)) {
                 alert("Please enter valid numeric values.");
                 return;
             }
+
+            // Determine Order Type (BUY/LONG or SELL/SHORT)
+            let isBuyOrder = stopLossPrice < currentMarketPrice;
+            let orderTypeText = isBuyOrder ? "BUY / LONG" : "SELL / SHORT";
+            let orderColor = isBuyOrder ? "green" : "red";
+
+            orderTypeBox.innerHTML = `<div class="p-3 text-white fw-bold text-center" style="background-color:${orderColor}; border-radius: 8px;">
+                ${orderTypeText}
+            </div>`;
 
             // Calculate Risk in USD
             let riskInUSD = (capital * riskPercentage) / 100;
@@ -40,7 +50,9 @@
             let microLots = (positionSize / 1000).toFixed(2);
 
             // Calculate Target Price
-            let targetPrice = currentMarketPrice + (stopLossPips * (rewardPercentage / riskPercentage) * 0.0001);
+            let targetPrice = isBuyOrder
+                ? currentMarketPrice + (stopLossPips * (rewardPercentage / riskPercentage) * 0.0001)
+                : currentMarketPrice - (stopLossPips * (rewardPercentage / riskPercentage) * 0.0001);
 
             // Update UI
             document.getElementById("positionSize").innerHTML = positionSize.toFixed(2);
@@ -77,6 +89,9 @@
 <body class="container mt-4">
 
     <h2 class="text-center mb-3">Spix Capital - Forex Position Calculator</h2>
+
+    <!-- Order Type Box -->
+    <div id="orderTypeBox" class="mb-3"></div>
 
     <div class="row">
         <div class="col-md-6 offset-md-3">
