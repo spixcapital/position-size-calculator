@@ -59,13 +59,19 @@
             document.getElementById("lotSize").innerHTML = `${standardLots} Std Lots | ${miniLots} Mini Lots | ${microLots} Micro Lots`;
             document.getElementById("riskUSD").innerHTML = riskInUSD.toFixed(2);
             document.getElementById("rewardUSD").innerHTML = rewardInUSD.toFixed(2);
-            document.getElementById("targetPrice").innerHTML = targetPrice.toFixed(5);
             document.getElementById("stopLossPriceOutput").innerHTML = stopLossPrice.toFixed(5);
+            document.getElementById("targetPrice").innerHTML = targetPrice.toFixed(5);
         }
 
-        function copyToClipboard(id) {
+        function copyToClipboard(id, buttonId) {
             let text = document.getElementById(id).innerText;
-            navigator.clipboard.writeText(text);
+            navigator.clipboard.writeText(text).then(() => {
+                let button = document.getElementById(buttonId);
+                button.innerText = "Copied!";
+                setTimeout(() => {
+                    button.innerText = "📋 Copy";
+                }, 1500);
+            });
         }
     </script>
     <style>
@@ -119,12 +125,12 @@
                 <p>Risk in USD: <span id="riskUSD">-</span></p>
                 <p>Reward in USD: <span id="rewardUSD">-</span></p>
 
-                <p>Target Price: <span id="targetPrice">-</span> 
-                    <span class="copy-btn" onclick="copyToClipboard('targetPrice')">📋 Copy</span>
+                <p>Stop-Loss Price: <span id="stopLossPriceOutput">-</span> 
+                    <span id="copyStopLoss" class="copy-btn" onclick="copyToClipboard('stopLossPriceOutput', 'copyStopLoss')">📋 Copy</span>
                 </p>
 
-                <p>Stop-Loss Price: <span id="stopLossPriceOutput">-</span> 
-                    <span class="copy-btn" onclick="copyToClipboard('stopLossPriceOutput')">📋 Copy</span>
+                <p>Target Price: <span id="targetPrice">-</span> 
+                    <span id="copyTarget" class="copy-btn" onclick="copyToClipboard('targetPrice', 'copyTarget')">📋 Copy</span>
                 </p>
             </div>
         </div>
