@@ -49,7 +49,7 @@
             let miniLots = (positionSize / 10000).toFixed(2);
             let microLots = (positionSize / 1000).toFixed(2);
 
-            // Target Price Calculation (Original Logic Restored)
+            // Target Price Calculation
             let targetPrice = isBuyOrder
                 ? currentMarketPrice + (Math.abs(currentMarketPrice - stopLossPrice) * (rewardPercentage / riskPercentage))
                 : currentMarketPrice - (Math.abs(currentMarketPrice - stopLossPrice) * (rewardPercentage / riskPercentage));
@@ -65,9 +65,7 @@
 
         function copyToClipboard(id) {
             let text = document.getElementById(id).innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Copied: " + text);
-            });
+            navigator.clipboard.writeText(text);
         }
     </script>
     <style>
