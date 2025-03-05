@@ -60,6 +60,7 @@
             document.getElementById("riskUSD").innerHTML = riskInUSD.toFixed(2);
             document.getElementById("rewardUSD").innerHTML = rewardInUSD.toFixed(2);
             document.getElementById("targetPrice").innerHTML = targetPrice.toFixed(5);
+            document.getElementById("stopLossPriceOutput").innerHTML = stopLossPrice.toFixed(5);
         }
 
         function copyToClipboard(id) {
@@ -115,11 +116,16 @@
             <div class="result-box">
                 <h5>Results</h5>
 
-                <p>Position Size: <span id="positionSize">-</span> <span class="copy-btn" onclick="copyToClipboard('positionSize')">📋 Copy</span></p>
+                <p>Position Size: <span id="positionSize">-</span></p>
                 <p>Lot Size: <span id="lotSize">-</span></p>
-                <p>Risk in USD: <span id="riskUSD">-</span> <span class="copy-btn" onclick="copyToClipboard('riskUSD')">📋 Copy</span></p>
-                <p>Reward in USD: <span id="rewardUSD">-</span> <span class="copy-btn" onclick="copyToClipboard('rewardUSD')">📋 Copy</span></p>
-                <p>Target Price: <span id="targetPrice">-</span> <span class="copy-btn" onclick="copyToClipboard('targetPrice')">📋 Copy</span></p>
+                <p>Risk in USD: <span id="riskUSD">-</span></p>
+                <p>Reward in USD: <span id="rewardUSD">-</span></p>
+                
+                <p>Target Price: <span id="targetPrice">-</span></p>
+
+                <p>Stop-Loss Price: <span id="stopLossPriceOutput">-</span> 
+                    <span class="copy-btn" onclick="copyToClipboard('stopLossPriceOutput')">📋 Copy</span>
+                </p>
             </div>
         </div>
     </div>
