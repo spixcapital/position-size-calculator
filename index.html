@@ -49,10 +49,10 @@
             let miniLots = (positionSize / 10000).toFixed(2);
             let microLots = (positionSize / 1000).toFixed(2);
 
-            // Calculate Target Price
+            // Target Price Calculation (Original Logic Restored)
             let targetPrice = isBuyOrder
-                ? currentMarketPrice + (stopLossPips * (rewardPercentage / riskPercentage) * 0.0001)
-                : currentMarketPrice - (stopLossPips * (rewardPercentage / riskPercentage) * 0.0001);
+                ? currentMarketPrice + (Math.abs(currentMarketPrice - stopLossPrice) * (rewardPercentage / riskPercentage))
+                : currentMarketPrice - (Math.abs(currentMarketPrice - stopLossPrice) * (rewardPercentage / riskPercentage));
 
             // Update UI
             document.getElementById("positionSize").innerHTML = positionSize.toFixed(2);
@@ -120,8 +120,10 @@
                 <p>Lot Size: <span id="lotSize">-</span></p>
                 <p>Risk in USD: <span id="riskUSD">-</span></p>
                 <p>Reward in USD: <span id="rewardUSD">-</span></p>
-                
-                <p>Target Price: <span id="targetPrice">-</span></p>
+
+                <p>Target Price: <span id="targetPrice">-</span> 
+                    <span class="copy-btn" onclick="copyToClipboard('targetPrice')">📋 Copy</span>
+                </p>
 
                 <p>Stop-Loss Price: <span id="stopLossPriceOutput">-</span> 
                     <span class="copy-btn" onclick="copyToClipboard('stopLossPriceOutput')">📋 Copy</span>
