@@ -3,75 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spix Capital - Position Size Calculator</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        input { padding: 10px; margin: 5px; width: 200px; }
-        button { padding: 10px; cursor: pointer; }
-        .box { display: inline-block; padding: 10px; border-radius: 5px; font-weight: bold; }
-        .long { background-color: green; color: white; }
-        .short { background-color: red; color: white; }
-    </style>
-</head>
-<body>
-    <h1>Spix Capital - Position Size Calculator</h1>
-    
-    <input type="number" id="capital" placeholder="Capital in Account" step="0.01"><br>
-    <input type="number" id="marketPrice" placeholder="Market Price" step="0.00001"><br>
-    <input type="number" id="stopLossPrice" placeholder="Stop-Loss Price" step="0.00001"><br>
-    <input type="number" id="riskPercentage" placeholder="Risk %" step="0.01"><br>
-    <input type="number" id="rewardPercentage" placeholder="Reward %" step="0.01"><br>
-    
-    <button onclick="calculatePositionSize()">Calculate</button>
-    
-    <h2>Order Type: <span id="orderType" class="box"></span></h2>
-    <h3>Position Size: <span id="positionSize"></span></h3>
-    <h3>Risk in USD: <span id="riskUsd"></span></h3>
-    <h3>Reward in USD: <span id="rewardUsd"></span></h3>
-    <h3>Stop-Loss Price: <span id="stopLoss"></span> <button onclick="copyToClipboard('stopLoss')">Copy</button></h3>
-    <h3>Target Price: <span id="targetPrice"></span> <button onclick="copyToClipboard('targetPrice')">Copy</button></h3>
-    
+    <title>Spix Capital - Forex Position Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script>
         function calculatePositionSize() {
-            let capital = parseFloat(document.getElementById('capital').value);
-            let marketPrice = parseFloat(document.getElementById('marketPrice').value);
-            let stopLossPrice = parseFloat(document.getElementById('stopLossPrice').value);
-            let riskPercentage = parseFloat(document.getElementById('riskPercentage').value) / 100;
-            let rewardPercentage = parseFloat(document.getElementById('rewardPercentage').value) / 100;
-            
-            if (isNaN(capital) || isNaN(marketPrice) || isNaN(stopLossPrice) || isNaN(riskPercentage) || isNaN(rewardPercentage)) {
-                alert("Please enter all values correctly");
+            let capital = parseFloat(document.getElementById("capital").value);
+            let stopLossPrice = parseFloat(document.getElementById("stopLossPrice").value);
+            let currentMarketPrice = parseFloat(document.getElementById("marketPrice").value);
+            let riskPercentage = parseFloat(document.getElementById("riskPercentage").value);
+            let rewardPercentage = parseFloat(document.getElementById("rewardPercentage").value);
+            let orderTypeBox = document.getElementById("orderTypeBox");
+
+            if (isNaN(capital) || isNaN(stopLossPrice) || isNaN(currentMarketPrice) || isNaN(riskPercentage) || isNaN(rewardPercentage)) {
+                alert("Please enter valid numeric values.");
                 return;
             }
-            
-            let orderType = (stopLossPrice > marketPrice) ? "SHORT" : "LONG";
-            document.getElementById('orderType').textContent = orderType;
-            document.getElementById('orderType').className = (orderType === "SHORT") ? "box short" : "box long";
-            
-            let stopLossPips = Math.abs(marketPrice - stopLossPrice) / 0.0001;
-            let pipValuePerUnit = 0.0001 / marketPrice;
-            
-            let riskUsd = capital * riskPercentage;
-            let positionSize = riskUsd / (stopLossPips * pipValuePerUnit);
-            positionSize = Math.floor(positionSize / 1000) * 1000; // Round to nearest 1000 units
-            
-            let targetPrice = (orderType === "LONG") ? marketPrice + (marketPrice * rewardPercentage) : marketPrice - (marketPrice * rewardPercentage);
-            let rewardPips = Math.abs(marketPrice - targetPrice) / 0.0001;
-            let rewardUsd = positionSize * (rewardPips * pipValuePerUnit);
-            
-            document.getElementById('positionSize').textContent = positionSize;
-            document.getElementById('riskUsd').textContent = riskUsd.toFixed(2);
-            document.getElementById('rewardUsd').textContent = rewardUsd.toFixed(2);
-            document.getElementById('stopLoss').textContent = stopLossPrice.toFixed(5);
-            document.getElementById('targetPrice').textContent = targetPrice.toFixed(5);
+
+            // Determine Order Type (BUY/LONG or SELL/SHORT)
+            let isBuyOrder = stopLossPrice < currentMarketPrice;
+            let orderTypeText = isBuyOrder ? "BUY / LONG" : "SELL / SHORT";
+            let orderColor = isBuyOrder ? "green" : "red";
+
+            orderTypeBox.innerHTML = `<div class="p-3 text-white fw-bold text-center" style="background-color:${orderColor}; border-radius: 8px;">
+                ${orderTypeText}
+            </div>`;
+
+            // Calculate Risk in USD
+            let riskInUSD = (capital * riskPercentage) / 100;
+
+            // Calculate Reward in USD
+            let rewardInUSD = (riskInUSD * (rewardPercentage / riskPercentage));
+
+            // Calculate Stop-Loss in Pips
+            let stopLossPips = Math.abs((currentMarketPrice - stopLossPrice) / 0.0001);
+
+            // Calculate Pip Value per Unit
+            let pipValuePerUnit = 0.0001 / currentMarketPrice;
+
+            // Calculate Position Size in Units
+            let positionSize = riskInUSD / (stopLossPips * pipValuePerUnit);
+
+            // Convert Position Size to Lots
+            let standardLots = (positionSize / 100000).toFixed(2);
+            let miniLots = (positionSize / 10000).toFixed(2);
+            let microLots = (positionSize / 1000).toFixed(2);
+
+            // Target Price Calculation
+            let targetPrice = isBuyOrder
+                ? currentMarketPrice + (Math.abs(currentMarketPrice - stopLossPrice) * (rewardPercentage / riskPercentage))
+                : currentMarketPrice - (Math.abs(currentMarketPrice - stopLossPrice) * (rewardPercentage / riskPercentage));
+
+            // Update UI
+            document.getElementById("positionSize").innerHTML = positionSize.toFixed(2);
+            document.getElementById("lotSize").innerHTML = `${standardLots} Std Lots | ${miniLots} Mini Lots | ${microLots} Micro Lots`;
+            document.getElementById("riskUSD").innerHTML = riskInUSD.toFixed(2);
+            document.getElementById("rewardUSD").innerHTML = rewardInUSD.toFixed(2);
+            document.getElementById("stopLossPriceOutput").innerHTML = stopLossPrice.toFixed(5);
+            document.getElementById("targetPrice").innerHTML = targetPrice.toFixed(5);
         }
-        
-        function copyToClipboard(id) {
-            let text = document.getElementById(id).textContent;
-            navigator.clipboard.writeText(text);
-            event.target.textContent = "Copied!";
-            setTimeout(() => { event.target.textContent = "Copy"; }, 1500);
+
+        function copyToClipboard(id, buttonId) {
+            let text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                let button = document.getElementById(buttonId);
+                button.innerText = "Copied!";
+                setTimeout(() => {
+                    button.innerText = "📋 Copy";
+                }, 1500);
+            });
         }
     </script>
+    <style>
+        .copy-btn {
+            cursor: pointer;
+            margin-left: 5px;
+            color: blue;
+        }
+        .copy-btn:hover {
+            text-decoration: underline;
+        }
+        .result-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body class="container mt-4">
+
+    <h2 class="text-center mb-3">Spix Capital - Forex Position Calculator</h2>
+
+    <!-- Order Type Box -->
+    <div id="orderTypeBox" class="mb-3"></div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <label>Capital in Account ($)</label>
+            <input type="number" id="capital" class="form-control" placeholder="Enter your capital" required>
+
+            <label class="mt-2">Stop-Loss Price</label>
+            <input type="number" id="stopLossPrice" class="form-control" placeholder="Enter stop-loss price" required>
+
+            <label class="mt-2">Current Market Price</label>
+            <input type="number" id="marketPrice" class="form-control" placeholder="Enter market price" required>
+
+            <label class="mt-2">Risk Percentage (%)</label>
+            <input type="number" id="riskPercentage" class="form-control" placeholder="Enter risk percentage" required>
+
+            <label class="mt-2">Reward Percentage (%)</label>
+            <input type="number" id="rewardPercentage" class="form-control" placeholder="Enter reward percentage" required>
+
+            <button class="btn btn-primary mt-3 w-100" onclick="calculatePositionSize()">Calculate</button>
+
+            <div class="result-box">
+                <h5>Results</h5>
+
+                <p>Position Size: <span id="positionSize">-</span></p>
+                <p>Lot Size: <span id="lotSize">-</span></p>
+                <p>Risk in USD: <span id="riskUSD">-</span></p>
+                <p>Reward in USD: <span id="rewardUSD">-</span></p>
+
+                <p>Stop-Loss Price: <span id="stopLossPriceOutput">-</span> 
+                    <span id="copyStopLoss" class="copy-btn" onclick="copyToClipboard('stopLossPriceOutput', 'copyStopLoss')">📋 Copy</span>
+                </p>
+
+                <p>Target Price: <span id="targetPrice">-</span> 
+                    <span id="copyTarget" class="copy-btn" onclick="copyToClipboard('targetPrice', 'copyTarget')">📋 Copy</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
